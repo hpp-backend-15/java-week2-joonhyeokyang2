@@ -5,5 +5,5 @@ import com.hhplus.course.user.domain.UserId;
 import com.hhplus.course.user.domain.UserRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface JpaUserRepository extends UserRepository, JpaRepository<User,UserId> {
+public interface JpaUserRepository extends UserRepository, JpaRepository<User, UserId> {
 }
