@@ -5,6 +5,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -12,10 +16,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class LectureTest {
 
     Lecture lecture;
+    LocalDate now = LocalDate.now();
 
     @BeforeEach
     void setUp() {
-        lecture = new Lecture(LectureId.of("lecture1"), LocalDate.now().plusMonths(1));
+        List<LectureItem> lectureItems = new ArrayList<>();
+        lectureItems.add(LectureItem.of(LectureItemId.of("lectureItem1"), now, new ArrayList<>()));
+        lecture = Lecture.from("lecture1", "heo jae", lectureItems);
     }
 
 
@@ -25,10 +32,10 @@ public class LectureTest {
         UserId userId = UserId.of("user1");
 
         //when
-        lecture.join(userId);
+        lecture.join(userId, now);
 
         //then
-        assertThat(lecture.getStudentIds()).isNotEmpty();
+        assertThat(lecture.getLectureItem(now).getStudentIds()).isNotEmpty();
     }
 
     @Test
@@ -36,12 +43,12 @@ public class LectureTest {
         //given
         for (int i = 0; i < 30; i++) {
             UserId userId = UserId.of("user" + i);
-            lecture.join(userId);
+            lecture.join(userId, now);
         }
 
         //when
         //then
-        assertThatThrownBy(() -> lecture.join(UserId.of("user31")))
+        assertThatThrownBy(() -> lecture.join(UserId.of("user31"), now))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("30명의 수강생 이상이 신청했습니다.");
 
@@ -53,10 +60,10 @@ public class LectureTest {
         UserId userId = UserId.of("user1");
 
         //when
-        lecture.join(userId);
+        lecture.join(userId, now);
 
         //then
-        assertThatThrownBy(() -> lecture.join(userId))
+        assertThatThrownBy(() -> lecture.join(userId, now))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("중복 강좌를 수강할 수 없습니다.");
 
@@ -64,14 +71,18 @@ public class LectureTest {
 
     @Test
     void 수강시점이_강좌일을지났다면_수강실패한다() throws Exception {
+
         //given
-        lecture = Lecture.from("lecture1", LocalDate.now().minusDays(1));
+        List<LectureItem> lectureItems = new ArrayList<>();
+        LocalDate yesterday = LocalDate.now().minusDays(1);
+        lectureItems.add(LectureItem.of(LectureItemId.of("lectureItem1"), yesterday, new ArrayList<>()));
+        lecture = Lecture.from("lecture1", "heo jae", lectureItems);
         UserId userId = UserId.of("user1");
 
         //when
 
         //then
-        assertThatThrownBy(() -> lecture.join(userId))
+        assertThatThrownBy(() -> lecture.join(userId, yesterday))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("이미 종료된 강좌를 수강할 수 없습니다.");
 
@@ -83,8 +94,8 @@ public class LectureTest {
         UserId userId = UserId.of("user1");
 
         //when
-        lecture.join(userId);
-        boolean hasUser = lecture.hasUserOf(userId);
+        lecture.join(userId, now);
+        boolean hasUser = lecture.hasUserOf(userId, now);
 
         //then
         assertThat(hasUser).isTrue();
@@ -97,7 +108,7 @@ public class LectureTest {
         UserId userId = UserId.of("user1");
 
         //when
-        boolean hasUser = lecture.hasUserOf(userId);
+        boolean hasUser = lecture.hasUserOf(userId, now);
 
         //then
         assertThat(hasUser).isFalse();

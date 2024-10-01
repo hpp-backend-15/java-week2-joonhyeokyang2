@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+
 import static com.hhplus.course.lecture.application.facade.LectureFacade.LectureEnrollResponse;
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -22,7 +24,8 @@ public class LectureController {
     public ResponseEntity<LectureEnrollResponse> enroll(@RequestBody LectureEnrollRequest lectureEnrollRequest) {
         String lectureId = lectureEnrollRequest.lectureId();
         String userId = lectureEnrollRequest.userId();
-        LectureEnrollResponse enrollResponse = lectureFacade.enroll(lectureId, userId);
+        LocalDate date = lectureEnrollRequest.date();
+        LectureEnrollResponse enrollResponse = lectureFacade.enroll(lectureId, userId, date);
 
         return ResponseEntity.status(CREATED).body(enrollResponse);
     }
