@@ -36,7 +36,8 @@ public class RegisterTest {
         //given
 
         //when
-        Register register = new Register(lectureItem, user);
+        Register register = new Register(lectureItem);
+        register.register(user);
 
         //then
         assertThat(register).isNotNull();
@@ -47,8 +48,8 @@ public class RegisterTest {
     @Test
     void 강의신청시_수강생이한번에30명이상이라면_수강실패한다() throws Exception {
         //given
-        Register register = new Register(lectureItem, user);
-        for (int i = 0; i < 29; i++) {
+        Register register = new Register(lectureItem);
+        for (int i = 0; i < 30; i++) {
             User newUser = new User(UserId.of("new user" + i));
             register.register(newUser);
         }
@@ -67,10 +68,11 @@ public class RegisterTest {
     @Test
     void 강의신청시_수강생이중복됐다면_수강실패한다() throws Exception {
         //given
+        Register register = new Register(lectureItem);
         User dupUser = new User(UserId.of("user1"));
 
         //when
-        Register register = new Register(lectureItem, dupUser);
+        register.register(dupUser);
 
         //then
         assertThatThrownBy(() -> register.register(dupUser))
@@ -82,7 +84,8 @@ public class RegisterTest {
     @Test
     void 유저가_수강신청했다면_신청여부는_참이다() throws Exception {
         //given
-        Register register = new Register(lectureItem, user);
+        Register register = new Register(lectureItem);
+        register.register(user);
 
         //when
         boolean hasUserRegistered = register.hasUserRegistered(user);
@@ -94,14 +97,14 @@ public class RegisterTest {
     @Test
     void 유저가_수강신청하지않았다면_신청여부는_거짓이다() throws Exception {
         //given
-        Register register = new Register(lectureItem, user);
+        Register register = new Register(lectureItem);
         User notReigsteredUser = new User(UserId.of("user1"));
 
         //when
         boolean hasUserRegistered = register.hasUserRegistered(notReigsteredUser);
 
         //then
-        assertThat(hasUserRegistered).isTrue();
+        assertThat(hasUserRegistered).isFalse();
 
     }
 }

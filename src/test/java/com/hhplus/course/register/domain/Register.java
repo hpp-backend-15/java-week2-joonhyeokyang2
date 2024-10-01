@@ -33,9 +33,8 @@ public class Register {
     @CollectionTable(name = "registers_users", joinColumns = @JoinColumn(name = "registers_id"))
     private List<UserId> students = new ArrayList<>();
 
-    public Register(LectureItem lectureItem, User user) {
+    public Register(LectureItem lectureItem) {
         setLectureItem(lectureItem.getId());
-        register(user);
     }
 
     private void setLectureItem(LectureItemId lectureItemId) {

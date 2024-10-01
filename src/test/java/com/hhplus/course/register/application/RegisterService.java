@@ -1,7 +1,6 @@
 package com.hhplus.course.register.application;
 
 import com.hhplus.course.lecture.application.service.LectureService;
-import com.hhplus.course.lecture.domain.Lecture;
 import com.hhplus.course.lecture.domain.LectureId;
 import com.hhplus.course.lecture.domain.LectureItem;
 import com.hhplus.course.register.domain.Register;
@@ -27,7 +26,12 @@ public class RegisterService {
     public RegisterId apply(String userId, String lectureId, LocalDate date) {
         LectureItem lectureItem = lectureService.findLectureItemByLectureIdAndDate(LectureId.of(lectureId), date);
         User user = userService.findById(UserId.of(userId));
-        Register register = new Register(lectureItem, user);
+
+        Register register = registerRepository.findByLectureItemIdAndStudentIdIn(lectureItem.getId(), user.getId())
+                .orElse(new Register(lectureItem));
+
+        register.register(user);
+
         Register registered = registerRepository.save(register);
         return registered.getId();
     }
