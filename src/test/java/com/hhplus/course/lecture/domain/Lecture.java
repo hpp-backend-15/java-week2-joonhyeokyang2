@@ -1,6 +1,5 @@
 package com.hhplus.course.lecture.domain;
 
-import com.hhplus.course.register.domain.Register;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +20,7 @@ import static lombok.AccessLevel.PROTECTED;
 public class Lecture {
     @EmbeddedId
     private LectureId id;
+
     private String title;
 
     @Embedded

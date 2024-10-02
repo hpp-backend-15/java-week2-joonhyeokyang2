@@ -23,7 +23,7 @@ public class RegisterService {
     private final RegisterRepository registerRepository;
 
     @Transactional
-    public RegisterId apply(String userId, String lectureId, LocalDate date) {
+    public ApplyResponse apply(String userId, String lectureId, LocalDate date) {
         LectureItem lectureItem = lectureService.findLectureItemByLectureIdAndDate(LectureId.of(lectureId), date);
         User user = userService.findById(UserId.of(userId));
 
@@ -33,6 +33,15 @@ public class RegisterService {
         register.register(user);
 
         Register registered = registerRepository.save(register);
-        return registered.getId();
+        return new ApplyResponse(userId, lectureId);
     }
+
+    /*
+        userId - 유저 상세 페이지 이동용
+        lectureId - 강좌 페이지 이동용
+     */
+    public record ApplyResponse(
+            String userId,
+            String lectureId
+    ) {}
 }
