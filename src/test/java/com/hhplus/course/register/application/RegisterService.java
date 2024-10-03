@@ -9,14 +9,15 @@ import com.hhplus.course.register.domain.RegisterRepository;
 import com.hhplus.course.user.application.UserService;
 import com.hhplus.course.user.domain.User;
 import com.hhplus.course.user.domain.UserId;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RegisterService {
     private final LectureService lectureService;
     private final UserService userService;
@@ -32,7 +33,7 @@ public class RegisterService {
 
         register.register(user);
 
-        Register registered = registerRepository.save(register);
+        registerRepository.save(register);
         return new ApplyResponse(userId, lectureId);
     }
 
@@ -43,5 +44,6 @@ public class RegisterService {
     public record ApplyResponse(
             String userId,
             String lectureId
-    ) {}
+    ) {
+    }
 }
