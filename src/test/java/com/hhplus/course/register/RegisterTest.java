@@ -1,6 +1,7 @@
 package com.hhplus.course.register;
 
 import com.hhplus.course.lecture.domain.Lecture;
+import com.hhplus.course.lecture.domain.LectureId;
 import com.hhplus.course.lecture.domain.LectureItem;
 import com.hhplus.course.register.domain.Register;
 import com.hhplus.course.user.domain.User;
@@ -37,7 +38,7 @@ public class RegisterTest {
         //given
 
         //when
-        Register register = new Register(lectureItem);
+        Register register = new Register(LectureId.of("lecture1"), lectureItem);
         register.register(user);
 
         //then
@@ -49,7 +50,7 @@ public class RegisterTest {
     @Test
     void 강의신청시_수강생이한번에30명이상이라면_수강실패한다() throws Exception {
         //given
-        Register register = new Register(lectureItem);
+        Register register = new Register(LectureId.of("lecture1"), lectureItem);
         for (int i = 0; i < 30; i++) {
             User newUser = new User(UserId.of("new user" + i));
             register.register(newUser);
@@ -69,7 +70,7 @@ public class RegisterTest {
     @Test
     void 강의신청시_수강생이중복됐다면_수강실패한다() throws Exception {
         //given
-        Register register = new Register(lectureItem);
+        Register register = new Register(LectureId.of("lecture1"),lectureItem);
         User dupUser = new User(UserId.of("user1"));
 
         //when
@@ -85,7 +86,7 @@ public class RegisterTest {
     @Test
     void 유저가_수강신청했다면_신청여부는_참이다() throws Exception {
         //given
-        Register register = new Register(lectureItem);
+        Register register = new Register(LectureId.of("lecture1"),lectureItem);
         register.register(user);
 
         //when
@@ -98,7 +99,7 @@ public class RegisterTest {
     @Test
     void 유저가_수강신청하지않았다면_신청여부는_거짓이다() throws Exception {
         //given
-        Register register = new Register(lectureItem);
+        Register register = new Register(LectureId.of("lecture1"),lectureItem);
         User notReigsteredUser = new User(UserId.of("user1"));
 
         //when

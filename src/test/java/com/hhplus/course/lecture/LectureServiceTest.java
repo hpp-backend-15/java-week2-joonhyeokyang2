@@ -29,7 +29,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER
 @SpringBootTest
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.yaml")
-//@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
+@DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)
 public class LectureServiceTest {
 
     @Autowired
@@ -93,4 +93,7 @@ public class LectureServiceTest {
         // then
         assertThat(responseList.size()).isEqualTo(0);
     }
+
+
+
 }

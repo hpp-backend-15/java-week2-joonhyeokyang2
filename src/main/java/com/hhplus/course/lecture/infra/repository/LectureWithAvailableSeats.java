@@ -28,6 +28,6 @@ public class LectureWithAvailableSeats {
         this.title = lecture.getTitle();
         this.lecturer = lecture.getLecturer().getName();
         this.lecturingDate = lectureItem.getLecturingDate();
-        this.openSeats = lectureItem.getCapacity() - register.getCount();
+        this.openSeats = lectureItem.getCapacity() - (register == null ? 0 : register.getCount());
     }
 }

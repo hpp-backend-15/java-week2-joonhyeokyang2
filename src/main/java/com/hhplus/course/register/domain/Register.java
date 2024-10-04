@@ -23,8 +23,9 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Builder
 public class Register {
-    @EmbeddedId
-    private RegisterId id;
+    @GeneratedValue
+    @Id @Column(name = "registers_id")
+    private Long id;
 
     @Embedded
     @AttributeOverride(name = "id", column = @Column(name = "registers_lecture_id"))
@@ -40,8 +41,14 @@ public class Register {
 
     private int count = 0;
 
-    public Register(LectureItem lectureItem) {
+    public Register(LectureId lectureId, LectureItem lectureItem) {
+        setLectureId(lectureId);
         setLectureItem(lectureItem.getId());
+    }
+
+    private void setLectureId(LectureId lectureId) {
+        if (lectureId == null) throw new NullPointerException("lecture 없습니다");
+        this.lectureId = lectureId;
     }
 
     private void setLectureItem(LectureItemId lectureItemId) {
