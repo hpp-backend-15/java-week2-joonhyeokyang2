@@ -11,10 +11,15 @@ import java.util.List;
 
 public interface LectureRepository {
     @Query("select new com.hhplus.course.lecture.infra.repository.LectureWithAvailableSeats(l, li, r) " +
-            "from Lecture l join l.lectureItems li join Register r on li.id = r.lectureItemId " +
-            "where r.count < 30 " +
-            "and (coalesce(:date, null) is null or li.lecturingDate = :date) ")
-    List<LectureWithAvailableSeats> findLectureWithAvailableSeats(@Param("date") LocalDate date);
+            "from Lecture l  join l.lectureItems li left join Register r on li.id = r.lectureItemId " +
+            "where r.count < 30 or r.count is null " +
+            "and li.lecturingDate = :date ")
+    List<LectureWithAvailableSeats> findLectureWithAvailableSeatsByDate(@Param("date") LocalDate date);
+
+    @Query("select new com.hhplus.course.lecture.infra.repository.LectureWithAvailableSeats(l, li, r) " +
+            "from Lecture l join l.lectureItems li left join Register r on li.id = r.lectureItemId " +
+            "where r.count < 30 or r.count is null ")
+    List<LectureWithAvailableSeats> findLectureWithAvailableSeats();
 
     @Query("select li " +
             "from Lecture l join l.lectureItems li " +

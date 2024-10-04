@@ -25,12 +25,12 @@ public class RegisterService {
     private final RegisterRepository registerRepository;
 
     @Transactional
-    public ApplyResponse apply(String userId, String lectureId, LocalDate date) {
+    public synchronized ApplyResponse apply(String userId, String lectureId, LocalDate date) {
         LectureItem lectureItem = lectureService.findLectureItemByLectureIdAndDate(LectureId.of(lectureId), date);
         User user = userService.findById(UserId.of(userId));
 
-        Register register = registerRepository.findByLectureItemIdAndStudents(lectureItem.getId(), user.getId())
-                .orElse(new Register(lectureItem));
+        Register register = registerRepository.findByLectureItemId(lectureItem.getId())
+                .orElse(new Register(LectureId.of(lectureId), lectureItem));
 
         register.register(user);
 

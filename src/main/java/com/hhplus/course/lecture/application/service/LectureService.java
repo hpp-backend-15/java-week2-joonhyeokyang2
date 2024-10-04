@@ -27,7 +27,9 @@ public class LectureService {
     }
 
     public List<AvailableLectureResponse> findAvailableLectures(LocalDate date) {
-        List<LectureWithAvailableSeats> lectureWithAvailableSeats = lectureRepository.findLectureWithAvailableSeats(date);
+        List<LectureWithAvailableSeats> lectureWithAvailableSeats;
+        if(date==null) lectureWithAvailableSeats = lectureRepository.findLectureWithAvailableSeats();
+        else lectureWithAvailableSeats = lectureRepository.findLectureWithAvailableSeatsByDate(date);
         Map<String, AvailableLectureResponseBuilder> groupedLectures = new HashMap<>();
 
         for (LectureWithAvailableSeats lectureWithSeats : lectureWithAvailableSeats) {
