@@ -92,5 +92,34 @@ public class RegisterServiceConcurrencyTest {
 
     }
 
+    @Test
+    void IfConcurrentSame5UserApplyingThenFail() throws Exception {
+        //given
+        AtomicInteger success = new AtomicInteger(0);
+        AtomicInteger fail = new AtomicInteger(0);
+
+        latch=new CountDownLatch(5);
+        //when
+        for (int i = 0; i <5; i++) {
+            executorService.submit(() -> {
+                try {
+                    registerService.apply(String.valueOf(1), "lecture1", now);
+                    success.incrementAndGet();
+                } catch (Exception e) {
+                    fail.incrementAndGet();
+                    e.printStackTrace();
+                }finally {
+                    latch.countDown();  // 작업이 끝난 후 카운트 감소
+                }
+            });
+        }
+
+        latch.await();  // 모든 스레드가 끝날 때까지 대기
+
+        //then
+        Assertions.assertThat(success.get()).isEqualTo(1);
+        Assertions.assertThat(fail.get()).isEqualTo(4);
+
+    }
 
 }
