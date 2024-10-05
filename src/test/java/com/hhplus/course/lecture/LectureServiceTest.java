@@ -7,10 +7,6 @@ import com.hhplus.course.lecture.domain.LectureItem;
 import com.hhplus.course.lecture.domain.LectureRepository;
 import com.hhplus.course.lecture.presentation.controller.dto.AvailableLectureResponse;
 import com.hhplus.course.lecture.presentation.controller.dto.LectureResponse;
-import com.hhplus.course.register.application.RegisterService;
-import com.hhplus.course.register.domain.Register;
-import com.hhplus.course.user.domain.User;
-import com.hhplus.course.user.domain.UserId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +43,7 @@ public class LectureServiceTest {
         now = LocalDate.now();
         LectureItem lectureItem1 = LectureItem.of("lectureItem1", now);
         LectureItem lectureItem2 = LectureItem.of("lectureItem2", now.plusDays(1));
-        Lecture lecture1 = Lecture.of("lecture1", "TDD-딸각주도개발", "허재", List.of(lectureItem1, lectureItem2));
+        Lecture lecture1 = Lecture.of("lecture1", "TDD-딸각주도개발", "허재", new ArrayList<>(Arrays.asList(lectureItem1, lectureItem2)));
         lectureRepository.save(lecture1);
     }
 
@@ -93,7 +91,6 @@ public class LectureServiceTest {
         // then
         assertThat(responseList.size()).isEqualTo(0);
     }
-
 
 
 }

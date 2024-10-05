@@ -22,6 +22,7 @@ import static com.hhplus.course.lecture.presentation.controller.dto.AvailableLec
 public class LectureService {
     private final LectureRepository lectureRepository;
 
+    @Transactional
     public LectureItem findLectureItemByLectureIdAndDate(LectureId lectureId, LocalDate date) {
         return Optional.of(lectureRepository.findByIdAndLectureItems_LecturingDate(lectureId, date).get(0)).orElseThrow();
     }

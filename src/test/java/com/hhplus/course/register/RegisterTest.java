@@ -63,7 +63,7 @@ public class RegisterTest {
             register.register(new User(UserId.of("new user30")));
         })
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("30명 이상 수강 불가합니다.");
+                .hasMessageContaining("30명 초과 수강 불가합니다.");
 
     }
 

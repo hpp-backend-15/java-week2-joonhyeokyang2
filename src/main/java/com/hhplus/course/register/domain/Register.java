@@ -75,7 +75,7 @@ public class Register {
 
     private void validateOver30Criteria() {
         if (students.size() >= 30) {
-            throw new IllegalStateException("30명 이상 수강 불가합니다.");
+            throw new IllegalStateException("30명 초과 수강 불가합니다.");
         }
     }
 }

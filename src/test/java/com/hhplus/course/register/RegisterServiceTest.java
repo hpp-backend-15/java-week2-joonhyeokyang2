@@ -2,9 +2,12 @@ package com.hhplus.course.register;
 
 
 import com.hhplus.course.lecture.domain.Lecture;
+import com.hhplus.course.lecture.domain.LectureId;
 import com.hhplus.course.lecture.domain.LectureItem;
 import com.hhplus.course.lecture.domain.LectureRepository;
 import com.hhplus.course.register.application.RegisterService;
+import com.hhplus.course.register.domain.Register;
+import com.hhplus.course.register.domain.RegisterRepository;
 import com.hhplus.course.user.application.UserService;
 import com.hhplus.course.user.domain.User;
 import com.hhplus.course.user.domain.UserId;
@@ -32,6 +35,9 @@ public class RegisterServiceTest {
     private RegisterService registerService;
 
     @Autowired
+    private RegisterRepository registerRepository;
+
+    @Autowired
     private LectureRepository lectureRepository;
 
     @Autowired
@@ -45,6 +51,10 @@ public class RegisterServiceTest {
         LectureItem lectureItem1 = LectureItem.of("lectureItem1", now);
         LectureItem lectureItem2 = LectureItem.of("lectureItem2", now.plusDays(1));
         Lecture lecture1 = Lecture.of("lecture1", "TDD-딸각주도개발", "허재", List.of(lectureItem1, lectureItem2));
+        Register register1 = new Register(LectureId.of("lecture1"), lectureItem1);
+        Register register2 = new Register(LectureId.of("lecture1"), lectureItem2);
+        registerRepository.save(register1);
+        registerRepository.save(register2);
         for (int i = 0; i <=31; i++) {
             userService.save(new User(UserId.of(String.valueOf(i))));
         }
@@ -62,10 +72,9 @@ public class RegisterServiceTest {
 
 
         //then
-        Assertions.assertThatThrownBy(() ->
-                        registerService.apply("31", "lecture1", now))
+        Assertions.assertThatThrownBy(() -> registerService.apply("31", "lecture1", now))
                 .isInstanceOf(IllegalStateException.class)
-                .hasMessageContaining("30명 이상 수강 불가합니다.");
+                .hasMessageContaining("30명 초과 수강 불가합니다.");
 
     }
 }

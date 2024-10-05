@@ -3,6 +3,8 @@ package com.hhplus.course.lecture.domain;
 import com.hhplus.course.lecture.infra.repository.LectureWithAvailableSeats;
 import com.hhplus.course.user.domain.UserId;
 import jakarta.annotation.Nullable;
+import jakarta.persistence.LockModeType;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -21,6 +23,7 @@ public interface LectureRepository {
             "where r.count < 30 or r.count is null ")
     List<LectureWithAvailableSeats> findLectureWithAvailableSeats();
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select li " +
             "from Lecture l join l.lectureItems li " +
             "where l.id = :lectureId and li.lecturingDate = :date")

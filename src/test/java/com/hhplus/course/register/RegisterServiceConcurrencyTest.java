@@ -1,9 +1,12 @@
 package com.hhplus.course.register;
 
 import com.hhplus.course.lecture.domain.Lecture;
+import com.hhplus.course.lecture.domain.LectureId;
 import com.hhplus.course.lecture.domain.LectureItem;
 import com.hhplus.course.lecture.domain.LectureRepository;
 import com.hhplus.course.register.application.RegisterService;
+import com.hhplus.course.register.domain.Register;
+import com.hhplus.course.register.domain.RegisterRepository;
 import com.hhplus.course.user.application.UserService;
 import com.hhplus.course.user.domain.User;
 import com.hhplus.course.user.domain.UserId;
@@ -35,6 +38,9 @@ public class RegisterServiceConcurrencyTest {
     private RegisterService registerService;
 
     @Autowired
+    private RegisterRepository registerRepository;
+
+    @Autowired
     private LectureRepository lectureRepository;
 
     @Autowired
@@ -56,9 +62,14 @@ public class RegisterServiceConcurrencyTest {
         LectureItem lectureItem1 = LectureItem.of("lectureItem1", now);
         LectureItem lectureItem2 = LectureItem.of("lectureItem2", now.plusDays(1));
         Lecture lecture1 = Lecture.of("lecture1", "TDD-딸각주도개발", "허재", List.of(lectureItem1, lectureItem2));
+        Register register1 = new Register(LectureId.of("lecture1"), lectureItem1);
+        Register register2 = new Register(LectureId.of("lecture1"), lectureItem2);
+        registerRepository.save(register1);
+        registerRepository.save(register2);
         for (int i = 0; i <= 41; i++) {
             userService.save(new User(UserId.of(String.valueOf(i))));
         }
+
         lectureRepository.save(lecture1);
     }
 
@@ -69,16 +80,16 @@ public class RegisterServiceConcurrencyTest {
         AtomicInteger success = new AtomicInteger(0);
         AtomicInteger fail = new AtomicInteger(0);
         //when
-        for (int i = 0; i <numberOfThreads; i++) {
+        for (int i = 0; i < numberOfThreads; i++) {
             int finalI = i;
-            executorService.submit(() -> {
+            executorService.execute(() -> {
                 try {
                     registerService.apply(String.valueOf(finalI), "lecture1", now);
                     success.incrementAndGet();
                 } catch (Exception e) {
                     fail.incrementAndGet();
                     e.printStackTrace();
-                }finally {
+                } finally {
                     latch.countDown();  // 작업이 끝난 후 카운트 감소
                 }
             });

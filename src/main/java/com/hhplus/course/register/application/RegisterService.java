@@ -25,18 +25,16 @@ public class RegisterService {
     private final RegisterRepository registerRepository;
 
     @Transactional
-    public synchronized ApplyResponse apply(String userId, String lectureId, LocalDate date) {
+    public ApplyResponse apply(String userId, String lectureId, LocalDate date) {
         LectureItem lectureItem = lectureService.findLectureItemByLectureIdAndDate(LectureId.of(lectureId), date);
         User user = userService.findById(UserId.of(userId));
 
-        Register register = registerRepository.findByLectureItemId(lectureItem.getId())
+        Register register = registerRepository.findByLectureItemId(lectureItem.getId()) //PESSIMISTIC WRITE 적용 (for update)
                 .orElse(new Register(LectureId.of(lectureId), lectureItem));
 
         register.register(user);
-
-        registerRepository.save(register);
+        registerRepository.save(register); //->10개의 `Register`가 생김..
         return new ApplyResponse(userId, lectureId);
     }
-
 
 }
